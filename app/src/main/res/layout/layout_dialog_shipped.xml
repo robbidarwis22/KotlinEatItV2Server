@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:background="@android:color/white"
+    android:paddingLeft="24dp"
+    android:paddingRight="24dp"
+    android:paddingTop="8dp"
+    android:paddingBottom="8dp"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/txt_title"
+        android:text="Update Order"
+        android:textSize="23sp"
+        android:fontFamily="@font/brandon_medium"
+        android:textColor="@android:color/black"
+        />
+
+    <TextView
+        android:layout_below="@+id/txt_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/txt_title_small"
+        android:text="Update Order Status"
+        android:textSize="22sp"
+        android:fontFamily="@font/brandon_medium"
+        android:textColor="@android:color/darker_gray"
+        />
+
+    <TextView
+        android:layout_below="@+id/txt_title_small"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/txt_status"
+        android:text="Status: Placed"
+        android:textSize="22sp"
+        android:fontFamily="@font/brandon_medium"
+        android:textColor="@android:color/darker_gray"
+        />
+
+    <RadioGroup
+        android:id="@+id/rdi_group"
+        android:layout_below="@+id/txt_status"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <RadioButton
+            android:id="@+id/rdi_shipped"
+            android:text="Shipped"
+            android:checked="true"
+            android:fontFamily="@font/brandon_medium"
+            android:textSize="22sp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <RadioButton
+            android:id="@+id/rdi_cancelled"
+            android:text="Cancelled"
+            android:textColor="@android:color/holo_red_dark"
+            android:fontFamily="@font/brandon_medium"
+            android:textSize="22sp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+    </RadioGroup>
+
+    <LinearLayout
+        android:id="@+id/layout_button"
+        android:layout_below="@+id/rdi_group"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="right"
+        android:orientation="horizontal">
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            android:id="@+id/btn_cancel"
+            android:text="Cancel"
+            android:textColor="@android:color/darker_gray"
+            android:background="@android:color/transparent"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            android:id="@+id/btn_ok"
+            android:text="OK"
+            android:textColor="@android:color/holo_red_dark"
+            android:background="@android:color/transparent"/>
+
+    </LinearLayout>
+
+
+</RelativeLayout>
