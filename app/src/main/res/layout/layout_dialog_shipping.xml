@@ -68,21 +68,14 @@
 
     </RadioGroup>
 
-    <ScrollView
+    <androidx.recyclerview.widget.RecyclerView
         android:layout_below="@+id/rdi_group"
         android:scrollbars="none"
         android:layout_above="@+id/layout_button"
+        android:id="@+id/recycler_shipper"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"/>
 
-        <TextView
-            android:text="a"
-            android:textSize="500sp"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
-
-
-    </ScrollView>
 
     <LinearLayout
         android:id="@+id/layout_button"
