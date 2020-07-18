@@ -30,15 +30,13 @@ import com.example.kotlineatitv2server.callback.IShipperLoadCallbackListener
 import com.example.kotlineatitv2server.common.BottomSheetOrderFragment
 import com.example.kotlineatitv2server.common.Common
 import com.example.kotlineatitv2server.common.MySwipeHelper
-import com.example.kotlineatitv2server.model.FCMSendData
-import com.example.kotlineatitv2server.model.OrderModel
-import com.example.kotlineatitv2server.model.ShipperModel
-import com.example.kotlineatitv2server.model.TokenModel
+import com.example.kotlineatitv2server.model.*
 import com.example.kotlineatitv2server.model.eventbus.AddonSizeEditEvent
 import com.example.kotlineatitv2server.model.eventbus.ChangeMenuClick
 import com.example.kotlineatitv2server.model.eventbus.LoadOrderEvent
 import com.example.kotlineatitv2server.remote.IFCMService
 import com.example.kotlineatitv2server.remote.RetrofitFCMClient
+import com.google.android.gms.tasks.Task
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
@@ -381,15 +379,14 @@ class OrderFragment: Fragment(), IShipperLoadCallbackListener {
             }
             else if (rdiShipping != null && rdiShipping.isChecked)
             {
-//                updateOrder(pos,orderModel,1)
+
                 var shipperModel:ShipperModel?=null
                 if (myShipperSelectedAdapter != null)
                 {
                     shipperModel = myShipperSelectedAdapter!!.selectedShipper
                     if (shipperModel != null)
                     {
-                        Toast.makeText(context,""+shipperModel.name,Toast.LENGTH_SHORT).show()
-                        dialog.dismiss()
+                        createShippingOrder(pos,shipperModel,orderModel,dialog)
                     }
                     else
                         Toast.makeText(context,"Please choose shipper",Toast.LENGTH_SHORT).show()
@@ -411,6 +408,37 @@ class OrderFragment: Fragment(), IShipperLoadCallbackListener {
                 dialog.dismiss()
             }
         }
+    }
+
+    private fun createShippingOrder(
+        pos:Int,
+        shipperModel: ShipperModel,
+        orderModel: OrderModel,
+        dialog: AlertDialog
+    ) {
+        val shippingOrder = ShippingOrderModel()
+        shippingOrder.shipperName = shipperModel.name
+        shippingOrder.shipperPhone = shipperModel.phone
+        shippingOrder.orderModel = orderModel
+        shippingOrder.isStartTrip = false
+        shippingOrder.currentLat = -1.0
+        shippingOrder.currentLng = -1.0
+        FirebaseDatabase.getInstance()
+            .getReference(Common.SHIPPING_ORDER_REF)
+            .push()
+            .setValue(shippingOrder)
+            .addOnFailureListener { e:Exception ->
+                dialog.dismiss()
+                Toast.makeText(context,""+e.message,Toast.LENGTH_SHORT).show()
+            }
+            .addOnCompleteListener { task: Task<Void?> ->
+                if(task.isSuccessful)
+                {
+                    dialog.dismiss()
+                    updateOrder(pos,orderModel,1)
+
+                }
+            }
     }
 
     private fun deleteOrder(pos: Int, orderModel: OrderModel) {
