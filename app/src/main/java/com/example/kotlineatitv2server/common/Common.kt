@@ -74,11 +74,11 @@ object Common {
             else -> "Error"
         }
 
-    fun updateToken(context: Context, token: String) {
+    fun updateToken(context: Context, token: String, isServerToken:Boolean, isShipperToken:Boolean) {
         FirebaseDatabase.getInstance()
             .getReference(Common.TOKEN_REF)
             .child(Common.currentServerUser!!.uid!!)
-            .setValue(TokenModel(Common.currentServerUser!!.phone!!,token))
+            .setValue(TokenModel(Common.currentServerUser!!.phone!!,token,isServerToken,isShipperToken))
             .addOnFailureListener{ e-> Toast.makeText(context,""+e.message,Toast.LENGTH_SHORT).show()}
     }
 

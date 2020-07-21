@@ -24,6 +24,7 @@ import com.example.kotlineatitv2server.model.eventbus.CategoryClick
 import com.example.kotlineatitv2server.model.eventbus.ChangeMenuClick
 import com.example.kotlineatitv2server.model.eventbus.ToastEvent
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.iid.FirebaseInstanceId
 import com.google.firebase.messaging.FirebaseMessaging
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
@@ -44,6 +45,7 @@ class HomeActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
 
         subscribeToTopic(Common.getNewOrderTopic())
+        updateToken();
 
         drawerLayout = findViewById(R.id.drawer_layout)
         navView = findViewById(R.id.nav_view)
@@ -105,6 +107,15 @@ class HomeActivity : AppCompatActivity() {
         Common.setSpanString("Hey ",Common.currentServerUser!!.name,txt_user)
 
         menuClick = R.id.nav_category //Default
+    }
+
+    private fun updateToken() {
+        FirebaseInstanceId.getInstance()
+            .instanceId
+            .addOnFailureListener { e -> Toast.makeText(this@HomeActivity,""+e.message,Toast.LENGTH_SHORT).show() }
+            .addOnSuccessListener { instanceIdResult ->
+                Common.updateToken(this@HomeActivity, instanceIdResult.token,true,false)
+            }
     }
 
     private fun subscribeToTopic(newOrderTopic: String) {

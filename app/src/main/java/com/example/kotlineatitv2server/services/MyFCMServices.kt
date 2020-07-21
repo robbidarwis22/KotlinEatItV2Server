@@ -8,7 +8,7 @@ import java.util.*
 class MyFCMServices : FirebaseMessagingService() {
     override fun onNewToken(p0: String) {
         super.onNewToken(p0)
-        Common.updateToken(this,p0)
+        Common.updateToken(this,p0,true,false) //because we are in server app so server=true
     }
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {

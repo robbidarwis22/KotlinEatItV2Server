@@ -435,7 +435,57 @@ class OrderFragment: Fragment(), IShipperLoadCallbackListener {
                 if(task.isSuccessful)
                 {
                     dialog.dismiss()
-                    updateOrder(pos,orderModel,1)
+                    //Load token
+                    FirebaseDatabase.getInstance()
+                        .getReference(Common.TOKEN_REF)
+                        .child(shipperModel.key!!)
+                        .addListenerForSingleValueEvent(object:ValueEventListener{
+                            override fun onCancelled(p0: DatabaseError) {
+                                dialog.dismiss()
+                                Toast.makeText(context,""+p0.message,Toast.LENGTH_SHORT).show()
+                            }
+
+                            override fun onDataChange(p0: DataSnapshot) {
+                                if (p0.exists())
+                                {
+                                    val tokenModel = p0.getValue(TokenModel::class.java)
+                                    val notiData = HashMap<String,String>()
+                                    notiData.put(Common.NOTI_TITLE,"You have new Order need ship");
+                                    notiData.put(Common.NOTI_CONTENT,StringBuilder("Your have new order need ship to ")
+                                        .append(orderModel.userPhone).toString())
+
+                                    val sendData = FCMSendData(tokenModel!!.token!!,notiData)
+
+                                    compositeDisposable.add(
+                                        ifcmService.sendNotification(sendData)
+                                            .subscribeOn(Schedulers.io())
+                                            .observeOn(AndroidSchedulers.mainThread())
+                                            .subscribe({ fcmResponse ->
+                                                dialog.dismiss()
+                                                if (fcmResponse.success == 1)
+                                                {
+                                                    updateOrder(pos,orderModel,1)
+                                                }
+                                                else
+                                                {
+                                                    Toast.makeText(context,"Failed to send notification ! Order wasn't update",Toast.LENGTH_SHORT).show()
+                                                }
+                                            },
+                                                {t ->
+                                                    dialog.dismiss()
+                                                    Toast.makeText(context,""+t.message,Toast.LENGTH_SHORT).show()
+                                                })
+                                    )
+                                }
+                                else
+                                {
+                                    dialog.dismiss()
+                                    Toast.makeText(context,"Token not found",Toast.LENGTH_SHORT).show()
+                                }
+                            }
+
+                        })
+
 
                 }
             }
