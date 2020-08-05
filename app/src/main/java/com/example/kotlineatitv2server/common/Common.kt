@@ -75,11 +75,12 @@ object Common {
         }
 
     fun updateToken(context: Context, token: String, isServerToken:Boolean, isShipperToken:Boolean) {
-        FirebaseDatabase.getInstance()
-            .getReference(Common.TOKEN_REF)
-            .child(Common.currentServerUser!!.uid!!)
-            .setValue(TokenModel(Common.currentServerUser!!.phone!!,token,isServerToken,isShipperToken))
-            .addOnFailureListener{ e-> Toast.makeText(context,""+e.message,Toast.LENGTH_SHORT).show()}
+        if (Common.currentServerUser != null)
+            FirebaseDatabase.getInstance()
+                .getReference(Common.TOKEN_REF)
+                .child(Common.currentServerUser!!.uid!!)
+                .setValue(TokenModel(Common.currentServerUser!!.phone!!,token,isServerToken,isShipperToken))
+                .addOnFailureListener{ e-> Toast.makeText(context,""+e.message,Toast.LENGTH_SHORT).show()}
     }
 
     fun showNotification(context: Context, id: Int, title: String?, content: String?,intent: Intent?) {

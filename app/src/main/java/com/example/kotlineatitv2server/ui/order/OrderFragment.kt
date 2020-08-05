@@ -425,7 +425,7 @@ class OrderFragment: Fragment(), IShipperLoadCallbackListener {
         shippingOrder.currentLng = -1.0
         FirebaseDatabase.getInstance()
             .getReference(Common.SHIPPING_ORDER_REF)
-            .child(orderModel!!.key!!) //change push() to key
+            .child(orderModel!!.key!!) //change push() to key()
             .setValue(shippingOrder)
             .addOnFailureListener { e:Exception ->
                 dialog.dismiss()
