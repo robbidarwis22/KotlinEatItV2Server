@@ -24,6 +24,7 @@ import com.google.firebase.database.FirebaseDatabase
 import java.util.*
 
 object Common {
+    val IS_OPEN_ACTIVITY_NEW_ORDER: String?="IsOpenActivityOrder    "
     var currentOrderSelected: OrderModel?=null
     val SHIPPING_ORDER_REF: String="ShippingOrder"
     val SHIPPER_REF: String="Shipper"
