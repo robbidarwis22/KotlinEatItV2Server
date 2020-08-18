@@ -50,4 +50,17 @@
 
     </fragment>
 
+    <fragment
+        android:id="@+id/nav_best_deals"
+        android:name="com.example.kotlineatitv2server.ui.best_deals.BestDealsFragment"
+        android:label="@string/menu_best_deals"
+        tools:layout="@layout/fragment_best_deals">
+
+        <action android:id="@+id/clearBackStack"
+            app:launchSingleTop="true"
+            app:popUpTo="@+id/nav_category"
+            app:popUpToInclusive="true"/>
+
+    </fragment>
+
 </navigation>
