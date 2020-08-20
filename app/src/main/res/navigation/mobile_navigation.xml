@@ -63,4 +63,17 @@
 
     </fragment>
 
+    <fragment
+        android:id="@+id/nav_most_popular"
+        android:name="com.example.kotlineatitv2server.ui.most_popular.MostPopularFragment"
+        android:label="@string/menu_most_popular"
+        tools:layout="@layout/most_popular_fragment">
+
+        <action android:id="@+id/clearBackStack"
+            app:launchSingleTop="true"
+            app:popUpTo="@+id/nav_category"
+            app:popUpToInclusive="true"/>
+
+    </fragment>
+
 </navigation>
