@@ -30,7 +30,7 @@ class MostPopularViewModel : ViewModel(), IMostPopularCallBackListener {
         return mostPopularListMutable!!
     }
 
-    private fun loadMostPopulars() {
+    fun loadMostPopulars() {
         val tempList = ArrayList<MostPopularModel>()
         val mostPopularRef = FirebaseDatabase.getInstance().getReference(Common.MOST_POPULAR)
         mostPopularRef.addListenerForSingleValueEvent(object: ValueEventListener {
