@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@android:color/white"
+    android:padding="8dp">
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <EditText
+            android:id="@+id/edt_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Title"/>
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <EditText
+            android:id="@+id/edt_content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Content"/>
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Image send"
+        android:textSize="30sp"/>
+
+    <RadioGroup
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="3">
+
+        <RadioButton
+            android:id="@+id/rdi_none"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:checked="true"
+            android:text="None"/>
+
+        <RadioButton
+            android:id="@+id/rdi_link"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Link"/>
+
+        <RadioButton
+            android:id="@+id/rdi_image"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Upload"/>
+
+    </RadioGroup>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <EditText
+            android:id="@+id/edt_link"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:hint="Link"/>
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <ImageView
+        android:id="@+id/img_upload"
+        android:scaleType="centerInside"
+        android:visibility="gone"
+        android:src="@mipmap/ic_launcher"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"/>
+
+</LinearLayout>

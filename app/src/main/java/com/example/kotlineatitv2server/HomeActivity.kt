@@ -1,13 +1,16 @@
 package com.example.kotlineatitv2server
 
+import android.app.Activity
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
+import androidx.appcompat.app.AlertDialog
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.navigation.NavigationView
@@ -21,23 +24,42 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.navigation.NavController
 import com.example.kotlineatitv2server.common.Common
+import com.example.kotlineatitv2server.model.FCMResponse
+import com.example.kotlineatitv2server.model.FCMSendData
 import com.example.kotlineatitv2server.model.eventbus.CategoryClick
 import com.example.kotlineatitv2server.model.eventbus.ChangeMenuClick
 import com.example.kotlineatitv2server.model.eventbus.ToastEvent
+import com.example.kotlineatitv2server.remote.IFCMService
+import com.example.kotlineatitv2server.remote.RetrofitFCMClient
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.iid.FirebaseInstanceId
 import com.google.firebase.messaging.FirebaseMessaging
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
+import java.util.*
+import kotlin.collections.HashMap
 
 class HomeActivity : AppCompatActivity() {
 
+    private val PICK_IMAGE_REQUEST = 7171
     private var menuClick: Int=-1
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var drawerLayout: DrawerLayout;
     private lateinit var navController: NavController
     private lateinit var navView: NavigationView
+
+    private var img_upload:ImageView?=null
+    private val compositeDisposable = CompositeDisposable()
+    private lateinit var ifcmService: IFCMService
+    private var imgUri: Uri?=null
+    private lateinit var storage:FirebaseStorage
+    private var storageReference:StorageReference?=null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,6 +67,9 @@ class HomeActivity : AppCompatActivity() {
         val toolbar: Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
 
+        ifcmService = RetrofitFCMClient.getInstance().create(IFCMService::class.java)
+        storage = FirebaseStorage.getInstance()
+        storageReference = storage.reference
         subscribeToTopic(Common.getNewOrderTopic())
         updateToken();
 
@@ -111,6 +136,10 @@ class HomeActivity : AppCompatActivity() {
                         navController.navigate(R.id.nav_most_popular)
                     }
                 }
+                else if (p0.itemId == R.id.nav_news)
+                {
+                    showSendNewsDialog();
+                }
 
                 menuClick = p0!!.itemId
                 return true
@@ -126,6 +155,132 @@ class HomeActivity : AppCompatActivity() {
         menuClick = R.id.nav_category //Default
 
         checkOpenOrderFragment()
+    }
+
+    private fun showSendNewsDialog() {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("News System")
+            .setMessage("Send news notification to all client")
+        val itemView = LayoutInflater.from(this).inflate(R.layout.layout_news_system,null)
+
+        //Views
+        val edt_title = itemView.findViewById<View>(R.id.edt_title) as EditText
+        val edt_content = itemView.findViewById<View>(R.id.edt_content) as EditText
+        val edt_link = itemView.findViewById<View>(R.id.edt_link) as EditText
+
+        val rdi_none = itemView.findViewById<View>(R.id.rdi_none) as RadioButton
+        val rdi_link = itemView.findViewById<View>(R.id.rdi_link) as RadioButton
+        val rdi_upload = itemView.findViewById<View>(R.id.rdi_image) as RadioButton
+
+        img_upload = itemView.findViewById(R.id.img_upload) as ImageView
+
+        //Event
+        rdi_none.setOnClickListener {
+            edt_link.visibility = View.GONE
+            img_upload!!.visibility = View.GONE
+        }
+        rdi_link.setOnClickListener {
+            edt_link.visibility = View.VISIBLE
+            img_upload!!.visibility = View.GONE
+        }
+        rdi_upload.setOnClickListener {
+            edt_link.visibility = View.GONE
+            img_upload!!.visibility = View.VISIBLE
+        }
+        img_upload!!.setOnClickListener {
+            val intent = Intent()
+            intent.type = "image/*"
+            intent.action = Intent.ACTION_GET_CONTENT
+            startActivityForResult(Intent.createChooser(intent,"Select Picture"),PICK_IMAGE_REQUEST)
+        }
+
+        builder.setView(itemView)
+        builder.setNegativeButton("CANCEL",{dialogInterface, i -> dialogInterface.dismiss() })
+        builder.setPositiveButton("SEND",{dialogInterface, i ->
+            if (rdi_none.isChecked)
+                sendNews(edt_title.text.toString(),edt_content.text.toString())
+            else if (rdi_link.isChecked)
+                sendNews(
+                    edt_title.text.toString(),
+                    edt_content.text.toString(),
+                    edt_link.text.toString()
+                )
+            else if (rdi_upload.isChecked)
+            {
+                if (imgUri != null)
+                {
+                    val dialog = AlertDialog.Builder(this).setMessage("Uploading...").create()
+                    dialog.show()
+                    val file_name = UUID.randomUUID().toString()
+                    val newsImage = storageReference!!.child("news/$file_name")
+                    newsImage.putFile(imgUri!!)
+                        .addOnFailureListener { e:Exception -> dialog.dismiss()
+                            Toast.makeText(this,e.message,Toast.LENGTH_LONG).show()
+                        }.addOnSuccessListener { taskSnapshot ->
+                            dialog.dismiss()
+                            newsImage.downloadUrl.addOnSuccessListener { uri ->
+                                sendNews(edt_title.text.toString(),edt_content.text.toString(),uri.toString())
+                            }
+                        }.addOnProgressListener { taskSnapshot ->
+                            val progress =
+                                Math.round(100.0 * taskSnapshot.bytesTransferred / taskSnapshot.totalByteCount)
+                                    .toDouble()
+                            dialog.setMessage(StringBuilder("Uploading: $progress %"))
+                        }
+                }
+            }
+        })
+        val dialog = builder.create()
+        dialog.show()
+
+    }
+
+    private fun sendNews(title: String, content: String, url: String) {
+        val notificationData : MutableMap<String,String> = HashMap()
+        notificationData[Common.NOTI_TITLE] = title
+        notificationData[Common.NOTI_CONTENT] = content
+        notificationData[Common.IS_SEND_IMAGE] = "true"
+        notificationData[Common.IMAGE_URL] = url
+
+        val fcmSendData = FCMSendData(Common.getNewsTopic(),notificationData)
+        val dialog = AlertDialog.Builder(this).setMessage("Waiting...").create()
+        dialog.show()
+        compositeDisposable.addAll(ifcmService.sendNotification(fcmSendData)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({t: FCMResponse? ->
+                dialog.dismiss()
+                if (t!!.message_id != 0L)
+                    Toast.makeText(this@HomeActivity,"News has been sent",Toast.LENGTH_LONG).show()
+                else
+                    Toast.makeText(this@HomeActivity,"News send failed",Toast.LENGTH_LONG).show()
+            },{t: Throwable? ->
+                dialog.dismiss()
+                Toast.makeText(this@HomeActivity,t!!.message,Toast.LENGTH_LONG).show()
+            }))
+    }
+
+    private fun sendNews(title: String, content: String) {
+        val notificationData : MutableMap<String,String> = HashMap()
+        notificationData[Common.NOTI_TITLE] = title
+        notificationData[Common.NOTI_CONTENT] = content
+        notificationData[Common.IS_SEND_IMAGE] = "false"
+        val fcmSendData = FCMSendData(Common.getNewsTopic(),notificationData)
+        val dialog = AlertDialog.Builder(this).setMessage("Waiting...").create()
+        dialog.show()
+        compositeDisposable.addAll(ifcmService.sendNotification(fcmSendData)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({t: FCMResponse? ->
+                dialog.dismiss()
+                if (t!!.message_id != 0L)
+                    Toast.makeText(this@HomeActivity,"News has been sent",Toast.LENGTH_LONG).show()
+                else
+                    Toast.makeText(this@HomeActivity,"News send failed",Toast.LENGTH_LONG).show()
+            },{t: Throwable? ->
+                dialog.dismiss()
+                Toast.makeText(this@HomeActivity,t!!.message,Toast.LENGTH_LONG).show()
+            }))
     }
 
     private fun checkOpenOrderFragment() {
@@ -236,4 +391,17 @@ class HomeActivity : AppCompatActivity() {
        }
         EventBus.getDefault().postSticky(ChangeMenuClick(event.isBackFromFoodList))
     }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == PICK_IMAGE_REQUEST && resultCode == Activity.RESULT_OK)
+        {
+            if (data != null && data.data != null)
+            {
+                imgUri = data.data
+                img_upload!!.setImageURI(imgUri)
+            }
+        }
+    }
+
 }

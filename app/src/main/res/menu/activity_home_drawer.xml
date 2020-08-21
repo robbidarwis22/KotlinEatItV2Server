@@ -13,6 +13,14 @@
 
     <group>
         <item
+            android:id="@+id/nav_news"
+            android:icon="@drawable/ic_baseline_markunread_24"
+            android:title="@string/menu_news" />
+
+    </group>
+
+    <group>
+        <item
             android:id="@+id/nav_best_deals"
             android:icon="@drawable/ic_baseline_star_24"
             android:title="@string/menu_best_deals" />
