@@ -15,10 +15,12 @@ import com.example.kotlineatitv2server.common.Common
 import com.example.kotlineatitv2server.model.ServerUserModel
 import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.IdpResponse
+import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.*
 import dmax.dialog.SpotsDialog
+import kotlinx.android.synthetic.main.layout_register.*
 import java.util.*
 
 
@@ -52,7 +54,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun init() {
-        providers = Arrays.asList<AuthUI.IdpConfig>(AuthUI.IdpConfig.PhoneBuilder().build())
+        providers = Arrays.asList<AuthUI.IdpConfig>(AuthUI.IdpConfig.PhoneBuilder().build(),
+        AuthUI.IdpConfig.EmailBuilder().build())
 
         serverRef = FirebaseDatabase.getInstance().getReference(Common.SERVER_REF)
         firebaseAuth = FirebaseAuth.getInstance()
@@ -123,11 +126,19 @@ class MainActivity : AppCompatActivity() {
         builder.setMessage("Please fill information \n Admin will accept your account late")
 
         val itemView = LayoutInflater.from(this).inflate(R.layout.layout_register,null)
+        val phone_input_layout = itemView.findViewById<View>(R.id.phone_input_layout) as TextInputLayout
         val edt_name = itemView.findViewById<View>(R.id.edt_name) as EditText
         val edt_phone = itemView.findViewById<View>(R.id.edt_phone) as EditText
 
-        //Set data
-        edt_phone.setText(user.phoneNumber)
+        //set data
+        if (user.phoneNumber == null || TextUtils.isEmpty(user.phoneNumber))
+        {
+            phone_input_layout.hint = "Email"
+            edt_phone.setText(user.email)
+            edt_name.setText(user.displayName)
+        }
+        else
+            edt_phone.setText(user!!.phoneNumber)
 
         builder.setNegativeButton("CANCEL",{dialogInterface, _ -> dialogInterface.dismiss() })
             .setPositiveButton("REGISTER", {_, _ ->
@@ -166,6 +177,8 @@ class MainActivity : AppCompatActivity() {
         startActivityForResult(AuthUI.getInstance()
             .createSignInIntentBuilder()
             .setAvailableProviders(providers!!)
+            .setTheme(R.style.LoginTheme)
+            .setLogo(R.drawable.logo)
             .build(),APP_REQUEST_CODE)
     }
 

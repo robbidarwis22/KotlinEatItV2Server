@@ -195,10 +195,10 @@ class HomeActivity : AppCompatActivity() {
         }
 
         builder.setView(itemView)
-        builder.setNegativeButton("CANCEL",{dialogInterface, i -> dialogInterface.dismiss() })
-        builder.setPositiveButton("SEND",{dialogInterface, i ->
+        builder.setNegativeButton("CANCEL", { dialogInterface, i -> dialogInterface.dismiss() })
+        builder.setPositiveButton("SEND", { dialogInterface, i ->
             if (rdi_none.isChecked)
-                sendNews(edt_title.text.toString(),edt_content.text.toString())
+                sendNews(edt_title.text.toString() ,edt_content.text.toString())
             else if (rdi_link.isChecked)
                 sendNews(
                     edt_title.text.toString(),

@@ -176,7 +176,7 @@ object Common {
         return StringBuilder("/topics/new_order").toString()
     }
 
-    fun getNewsTopic(): String? {
+    fun getNewsTopic(): String {
         return StringBuilder("/topics/news").toString()
     }
 
