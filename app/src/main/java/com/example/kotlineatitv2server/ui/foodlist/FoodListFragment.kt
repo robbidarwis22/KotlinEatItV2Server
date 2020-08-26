@@ -357,7 +357,9 @@ class FoodListFragment : Fragment() {
         updateData["foods"] = foods!!
 
         FirebaseDatabase.getInstance()
-            .getReference(Common.CATEGORY_REF)
+            .getReference(Common.RESTAURANT_REF)
+            .child(Common.currentServerUser!!.restaurant!!)
+            .child(Common.CATEGORY_REF)
             .child(Common.categorySelected!!.menu_id!!)
             .updateChildren(updateData)
             .addOnFailureListener { e -> Toast.makeText(context!!,""+e.message,Toast.LENGTH_SHORT).show() }

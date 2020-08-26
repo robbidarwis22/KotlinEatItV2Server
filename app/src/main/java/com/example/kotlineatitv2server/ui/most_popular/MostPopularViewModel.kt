@@ -32,7 +32,9 @@ class MostPopularViewModel : ViewModel(), IMostPopularCallBackListener {
 
     fun loadMostPopulars() {
         val tempList = ArrayList<MostPopularModel>()
-        val mostPopularRef = FirebaseDatabase.getInstance().getReference(Common.MOST_POPULAR)
+        val mostPopularRef = FirebaseDatabase.getInstance().getReference(Common.RESTAURANT_REF)
+            .child(Common.currentServerUser!!.restaurant!!)
+            .child(Common.MOST_POPULAR)
         mostPopularRef.addListenerForSingleValueEvent(object: ValueEventListener {
             override fun onCancelled(p0: DatabaseError) {
                 mostPopularCallBackListener.onListMostPopularLoadFailed((p0.message))

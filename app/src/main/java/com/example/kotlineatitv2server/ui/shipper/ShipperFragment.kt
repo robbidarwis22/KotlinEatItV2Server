@@ -161,7 +161,9 @@ class ShipperFragment : Fragment() {
         val updateData = HashMap<String,Any>()
         updateData.put("active",updateActiveEvent.active)
         FirebaseDatabase.getInstance()
-            .getReference(Common.SHIPPER_REF)
+            .getReference(Common.RESTAURANT_REF)
+            .child(Common.currentServerUser!!.restaurant!!)
+            .child(Common.SHIPPER_REF)
             .child(updateActiveEvent.shipperModel!!.key!!)
             .updateChildren(updateData)
             .addOnFailureListener{ e -> Toast.makeText(context,""+e.message,Toast.LENGTH_SHORT).show() }

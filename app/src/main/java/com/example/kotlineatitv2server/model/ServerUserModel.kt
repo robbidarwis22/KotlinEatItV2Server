@@ -5,4 +5,5 @@ class ServerUserModel {
     var name:String? = null
     var phone:String? = null
     var isActive:Boolean = false
+    var restaurant:String? = null
 }

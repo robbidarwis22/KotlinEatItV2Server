@@ -74,7 +74,9 @@ class SizeAddonEditActivity : AppCompatActivity() {
             updateData["foods"] = Common.categorySelected!!.foods!!
 
             FirebaseDatabase.getInstance()
-                .getReference(Common.CATEGORY_REF)
+                .getReference(Common.RESTAURANT_REF)
+                .child(Common.currentServerUser!!.restaurant!!)
+                .child(Common.CATEGORY_REF)
                 .child(Common.categorySelected!!.menu_id!!)
                 .updateChildren(updateData)
                 .addOnFailureListener{ e:Exception -> Toast.makeText(this@SizeAddonEditActivity,""+e.message,Toast.LENGTH_SHORT).show() }

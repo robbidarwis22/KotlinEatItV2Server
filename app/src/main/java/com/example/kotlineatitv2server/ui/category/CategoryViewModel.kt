@@ -45,7 +45,9 @@ class CategoryViewModel : ViewModel(), ICategoryCallBackListener {
 
     fun loadCategory() {
         val tempList = ArrayList<CategoryModel>()
-        val categoryRef = FirebaseDatabase.getInstance().getReference(Common.CATEGORY_REF)
+        val categoryRef = FirebaseDatabase.getInstance().getReference(Common.RESTAURANT_REF)
+            .child(Common.currentServerUser!!.restaurant!!)
+            .child(Common.CATEGORY_REF)
         categoryRef.addListenerForSingleValueEvent(object: ValueEventListener {
             override fun onCancelled(p0: DatabaseError) {
                 categoryCallBackListener.onCategoryLoadFailed((p0.message))

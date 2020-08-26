@@ -95,7 +95,9 @@ class TrackingOrderActivity : AppCompatActivity(), OnMapReadyCallback,
 
     private fun checkOrderFromFirebase() {
         FirebaseDatabase.getInstance()
-            .getReference(Common.SHIPPING_ORDER_REF)
+            .getReference(Common.RESTAURANT_REF)
+            .child(Common.currentServerUser!!.restaurant!!)
+            .child(Common.SHIPPING_ORDER_REF)
             .child(Common.currentOrderSelected!!.orderNumber!!)
             .addListenerForSingleValueEvent(object:ValueEventListener{
                 override fun onCancelled(p0: DatabaseError) {
@@ -211,7 +213,9 @@ class TrackingOrderActivity : AppCompatActivity(), OnMapReadyCallback,
 
     private fun subscribeShipperMove(currentShippingOrder: ShippingOrderModel) {
         shippingRef = FirebaseDatabase.getInstance()
-            .getReference(Common.SHIPPING_ORDER_REF)
+            .getReference(Common.RESTAURANT_REF)
+            .child(Common.currentServerUser!!.restaurant!!)
+            .child(Common.SHIPPING_ORDER_REF)
             .child(currentShippingOrder!!.key!!)
         shippingRef.addValueEventListener(this)
 

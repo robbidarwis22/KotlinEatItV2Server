@@ -24,6 +24,7 @@ import com.google.firebase.database.FirebaseDatabase
 import java.util.*
 
 object Common {
+    val RESTAURANT_REF: String= "Restaurant" //same as name reference in firebase
     val IMAGE_URL: String="IMAGE_URL"
     val IS_SEND_IMAGE: String="IS_SEND_IMAGE"
     var mostPopularSelected: MostPopularModel? = null
@@ -37,7 +38,8 @@ object Common {
     val ORDER_REF: String="Order"
     var foodSelected: FoodModel?=null
     var categorySelected: CategoryModel?=null
-    const val CATEGORY_REF: String = "Category"
+//    val CATEGORY_REF: String = "Category"
+    const val CATEGORY_REF: String="Category"
     val SERVER_REF = "Server"
     var currentServerUser: ServerUserModel? = null
 
@@ -177,7 +179,12 @@ object Common {
     }
 
     fun getNewsTopic(): String {
-        return StringBuilder("/topics/news").toString()
+        //restore something like: restaurantid_news
+        return StringBuilder("/topics/")
+            .append(Common.currentServerUser!!.restaurant!!)
+            .append("_")
+            .append("news")
+            .toString()
     }
 
 
