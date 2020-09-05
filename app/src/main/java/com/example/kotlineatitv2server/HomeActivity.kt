@@ -39,6 +39,7 @@ import com.google.firebase.storage.StorageReference
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import kotlinx.android.synthetic.main.app_bar_home.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
@@ -66,6 +67,8 @@ class HomeActivity : AppCompatActivity() {
         setContentView(R.layout.activity_home)
         val toolbar: Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
+
+        fab_chat.setOnClickListener { startActivity(Intent(this,ChatListActivity::class.java)) }
 
         ifcmService = RetrofitFCMClient.getInstance().create(IFCMService::class.java)
         storage = FirebaseStorage.getInstance()

@@ -24,6 +24,7 @@ import com.google.firebase.database.FirebaseDatabase
 import java.util.*
 
 object Common {
+    val CHAT_REF: String= "Chat"
     val RESTAURANT_REF: String= "Restaurant" //same as name reference in firebase
     val IMAGE_URL: String="IMAGE_URL"
     val IS_SEND_IMAGE: String="IS_SEND_IMAGE"
