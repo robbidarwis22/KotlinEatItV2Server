@@ -3,12 +3,15 @@ package com.example.kotlineatitv2server.common
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
+import android.content.ContentResolver
 import android.content.Context
 import android.content.Intent
 import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.graphics.Typeface
+import android.net.Uri
 import android.os.Build
+import android.provider.OpenableColumns
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.SpannableStringBuilder
@@ -24,6 +27,9 @@ import com.google.firebase.database.FirebaseDatabase
 import java.util.*
 
 object Common {
+    val CHAT_DETAIL_REF: String="ChatDetail"
+    val KEY_CHAT_SENDER: String?="CHAT_SENDER"
+    val KEY_CHAT_ROOM_ID: String?="CHAT_ROOM_ID"
     val CHAT_REF: String= "Chat"
     val RESTAURANT_REF: String= "Restaurant" //same as name reference in firebase
     val IMAGE_URL: String="IMAGE_URL"
@@ -51,6 +57,27 @@ object Common {
     val DEFAULT_COLUMN_COUNT: Int=0
 
     val TOKEN_REF = "Tokens"
+
+    fun getFileName(contentResolver: ContentResolver?, fileUri: Uri): Any {
+        var result:String?=null
+        if (fileUri.scheme == "content")
+        {
+            val cursor = contentResolver!!.query(fileUri,null,null,null,null)
+            try {
+                if (cursor != null && cursor.moveToFirst())
+                    result = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME))
+            }finally {
+                cursor!!.close()
+            }
+        }
+        if (result == null)
+        {
+            result = fileUri.path
+            val cut = result!!.lastIndexOf('/')
+            if (cut != -1) result = result.substring(cut+1)
+        }
+        return result
+    }
 
     fun setSpanString(welcome: String, name: String?, txtUser: TextView?) {
         val builder = SpannableStringBuilder()

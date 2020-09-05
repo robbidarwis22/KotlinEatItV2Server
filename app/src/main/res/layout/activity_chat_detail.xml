@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:background="@android:color/white"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="8dp">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/toolbar_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.AppBarOverlay">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@android:color/white"
+            app:titleTextColor="@android:color/black"
+            android:theme="@style/ToolbarColoredBackArrow"
+            app:popupTheme="@style/AppTheme.PopupOverlay"/>
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <LinearLayout
+        android:id="@+id/chat_layout"
+        android:layout_alignParentBottom="true"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/img_preview"
+            android:visibility="gone"
+            android:layout_width="80dp"
+            android:layout_height="80dp"/>
+
+        <LinearLayout
+            android:padding="8dp"
+            android:weightSum="10"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/img_camera"
+                android:layout_gravity="center_vertical"
+                android:src="@drawable/ic_baseline_camera_alt_grey_24"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <ImageView
+                android:id="@+id/img_image"
+                android:layout_gravity="center_vertical"
+                android:src="@drawable/ic_baseline_image_grey_24"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/edt_chat"
+                android:hint="Your message"
+                android:layout_width="0dp"
+                android:layout_weight="10"
+                android:layout_height="wrap_content"/>
+
+            <ImageView
+                android:id="@+id/img_send"
+                android:layout_gravity="center_vertical"
+                android:src="@drawable/ic_menu_send"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_chat"
+        android:layout_below="@+id/toolbar_layout"
+        android:layout_above="@+id/chat_layout"
+        android:layout_marginTop="4dp"
+        app:stackFromEnd="true"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+</RelativeLayout>

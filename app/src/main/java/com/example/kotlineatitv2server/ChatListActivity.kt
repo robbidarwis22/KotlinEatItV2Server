@@ -1,11 +1,11 @@
 package com.example.kotlineatitv2server
 
-import androidx.appcompat.app.AppCompatActivity
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.kotlineatitv2server.callback.IRecyclerItemClickListener
@@ -18,8 +18,6 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.Query
 import kotlinx.android.synthetic.main.activity_chat_list.*
-import kotlinx.android.synthetic.main.activity_chat_list.toolbar
-import kotlinx.android.synthetic.main.app_bar_home.*
 
 class ChatListActivity : AppCompatActivity() {
 
@@ -71,7 +69,11 @@ class ChatListActivity : AppCompatActivity() {
                 holder.setListener(object : IRecyclerItemClickListener{
                     override fun onItemClick(view: View, pos: Int) {
                         //code late
-                        Toast.makeText(this@ChatListActivity,model.lastMessage,Toast.LENGTH_SHORT).show()
+                        //Toast.makeText(this@ChatListActivity,model.lastMessage,Toast.LENGTH_SHORT).show()
+                        val intent = Intent(this@ChatListActivity,ChatDetailActivity::class.java)
+                        intent.putExtra(Common.KEY_CHAT_ROOM_ID,adapter.getRef(pos).key)
+                        intent.putExtra(Common.KEY_CHAT_SENDER,model.createName)
+                        startActivity(intent)
                     }
 
                 })
