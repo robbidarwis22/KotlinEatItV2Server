@@ -1,5 +1,6 @@
 package com.example.kotlineatitv2server.ui.order
 
+import android.Manifest
 import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Color
@@ -22,7 +23,6 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.kotlineatitv2server.R
-import com.example.kotlineatitv2server.SizeAddonEditActivity
 import com.example.kotlineatitv2server.TrackingOrderActivity
 import com.example.kotlineatitv2server.adapter.MyOrderAdapter
 import com.example.kotlineatitv2server.adapter.MyShipperSelectedAdapter
@@ -32,9 +32,9 @@ import com.example.kotlineatitv2server.common.BottomSheetOrderFragment
 import com.example.kotlineatitv2server.common.Common
 import com.example.kotlineatitv2server.common.MySwipeHelper
 import com.example.kotlineatitv2server.model.*
-import com.example.kotlineatitv2server.model.eventbus.AddonSizeEditEvent
 import com.example.kotlineatitv2server.model.eventbus.ChangeMenuClick
 import com.example.kotlineatitv2server.model.eventbus.LoadOrderEvent
+import com.example.kotlineatitv2server.model.eventbus.PrintOrderEvent
 import com.example.kotlineatitv2server.remote.IFCMService
 import com.example.kotlineatitv2server.remote.RetrofitFCMClient
 import com.google.android.gms.tasks.Task
@@ -122,6 +122,47 @@ class OrderFragment: Fragment(), IShipperLoadCallbackListener {
                 viewHolder: RecyclerView.ViewHolder,
                 buffer: MutableList<MyButton>
             ) {
+                buffer.add(MyButton(context!!,
+                    "Print",
+                    30,
+                    0,
+                    Color.parseColor("#8b0010"),
+                    object : IMyButtonCallback {
+                        override fun onClick(pos: Int) {
+
+                            Dexter.withActivity(activity)
+                                .withPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                                .withListener(object:PermissionListener{
+                                    override fun onPermissionGranted(response: PermissionGrantedResponse?) {
+
+                                        //send event to HomeActivity to process print
+                                        EventBus.getDefault().postSticky(
+                                            PrintOrderEvent(
+                                            StringBuilder(Common.getAppPath(activity!!))
+                                                .append(Common.FILE_PRINT).toString(),
+                                            adapter!!.getItemAtPosition(pos)
+                                        )
+                                        )
+                                    }
+
+                                    override fun onPermissionDenied(response: PermissionDeniedResponse?) {
+                                        Toast.makeText(context,"You should accept this permission",Toast.LENGTH_SHORT).show()
+                                    }
+
+                                    override fun onPermissionRationaleShouldBeShown(
+                                        permission: PermissionRequest?,
+                                        token: PermissionToken?
+                                    ) {
+
+                                    }
+
+                                }).check()
+
+                        }
+
+                    })
+                )
+
                 buffer.add(MyButton(context!!,
                     "Directions",
                     30,

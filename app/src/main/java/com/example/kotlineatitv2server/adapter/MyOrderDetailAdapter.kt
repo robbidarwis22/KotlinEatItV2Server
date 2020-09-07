@@ -14,7 +14,6 @@ import com.example.kotlineatitv2server.model.CartItem
 import com.example.kotlineatitv2server.model.SizeModel
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import kotlinx.android.synthetic.main.layout_order_detail_item.view.*
 
 class MyOrderDetailAdapter(internal var context: Context, internal var cartItemList:MutableList<CartItem>):RecyclerView.Adapter<MyOrderDetailAdapter.MyViewHolder>(){
 
@@ -53,9 +52,16 @@ class MyOrderDetailAdapter(internal var context: Context, internal var cartItemL
             .into(holder.img_food_image!!)
         holder.txt_food_name!!.setText(StringBuilder().append(cartItemList[position].foodName))
         holder.txt_food_quantity!!.setText(StringBuilder("Quantity:  ").append(cartItemList[position].foodQuantity))
-        val sizeModel:SizeModel = gson.fromJson(cartItemList[position].foodSize,
-        object:TypeToken<SizeModel?>(){}.type)
-        if (sizeModel != null) holder.txt_food_size!!.setText(StringBuilder("Size: ").append(sizeModel.name))
+
+        //Fix crash
+        if (cartItemList[position].foodSize
+                .equals("Default"))
+            holder.txt_food_size!!.setText(StringBuilder("Size: Default"))
+        else{
+            val sizeModel = gson.fromJson<SizeModel>(cartItemList[position].foodSize,SizeModel::class.java)
+            holder.txt_food_size!!.setText(StringBuilder("Size: ").append(sizeModel.name))
+        }
+
         if (!cartItemList[position].foodAddon.equals("Default"))
         {
             val addonModels : List<AddonModel> = gson.fromJson(cartItemList[position].foodAddon,
