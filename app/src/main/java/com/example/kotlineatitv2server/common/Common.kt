@@ -282,4 +282,10 @@ object Common {
         }
     }
 
+    enum class ACTION{
+        CREATE,
+        UPDATE,
+        DELETE
+    }
+
 }

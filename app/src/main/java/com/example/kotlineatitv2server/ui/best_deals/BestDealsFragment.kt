@@ -5,9 +5,7 @@ import android.app.AlertDialog
 import android.content.Intent
 import android.graphics.Color
 import android.net.Uri
-import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,21 +14,20 @@ import android.view.animation.LayoutAnimationController
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.Toast
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.kotlineatitv2server.R
 import com.example.kotlineatitv2server.adapter.MyBestDealsAdapter
-import com.example.kotlineatitv2server.adapter.MyCategoriesAdapter
 import com.example.kotlineatitv2server.callback.IMyButtonCallback
 import com.example.kotlineatitv2server.common.Common
 import com.example.kotlineatitv2server.common.MySwipeHelper
 import com.example.kotlineatitv2server.model.BestDealsModel
-import com.example.kotlineatitv2server.model.CategoryModel
 import com.example.kotlineatitv2server.model.eventbus.ToastEvent
-import com.example.kotlineatitv2server.ui.category.CategoryViewModel
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
@@ -156,7 +153,7 @@ class BestDealsFragment : Fragment() {
             .addOnFailureListener{e-> Toast.makeText(context,""+e.message,Toast.LENGTH_SHORT).show()}
             .addOnCompleteListener{ task ->
                 viewModel!!.loadBestDeals()
-                EventBus.getDefault().postSticky(ToastEvent(false,true))
+                EventBus.getDefault().postSticky(ToastEvent(Common.ACTION.DELETE,true))
             }
     }
 
@@ -232,7 +229,7 @@ class BestDealsFragment : Fragment() {
             .addOnFailureListener{e-> Toast.makeText(context,""+e.message,Toast.LENGTH_SHORT).show()}
             .addOnCompleteListener{ task ->
                 viewModel!!.loadBestDeals()
-                EventBus.getDefault().postSticky(ToastEvent(true,true))
+                EventBus.getDefault().postSticky(ToastEvent(Common.ACTION.UPDATE,true))
             }
     }
 

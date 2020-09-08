@@ -13,7 +13,9 @@ import android.util.DisplayMetrics
 import android.view.*
 import android.view.animation.AnimationUtils
 import android.view.animation.LayoutAnimationController
-import android.widget.*
+import android.widget.EditText
+import android.widget.ImageView
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -36,9 +38,7 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import dmax.dialog.SpotsDialog
-
 import org.greenrobot.eventbus.EventBus
-import java.lang.StringBuilder
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
@@ -367,7 +367,7 @@ class FoodListFragment : Fragment() {
                 if (task.isSuccessful)
                 {
                     foodListViewModel.getMutableFoodModelListData()
-                    EventBus.getDefault().postSticky(ToastEvent(!isDelete,true))
+                    EventBus.getDefault().postSticky(ToastEvent(Common.ACTION.UPDATE,true))
                 }
             }
     }

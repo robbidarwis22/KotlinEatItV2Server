@@ -1,3 +1,5 @@
 package com.example.kotlineatitv2server.model.eventbus
 
-class ToastEvent(var isUpdate:Boolean,var isBackFromFoodList:Boolean)
+import com.example.kotlineatitv2server.common.Common
+
+class ToastEvent(var action: Common.ACTION, var isBackFromFoodList:Boolean)
