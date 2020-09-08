@@ -1,11 +1,11 @@
 package com.example.kotlineatitv2server
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.kotlineatitv2server.adapter.MyAddonAdapter
@@ -164,6 +164,7 @@ class SizeAddonEditActivity : AppCompatActivity() {
     }
 
     override fun onStop() {
+        EventBus.getDefault().removeAllStickyEvents()
         EventBus.getDefault().removeStickyEvent(UpdateSizeModel::class.java)
         super.onStop()
     }
@@ -173,23 +174,25 @@ class SizeAddonEditActivity : AppCompatActivity() {
     {
         if (!event.isAddon) //Size
         {
-            if (Common.foodSelected!!.size != null)
-            {
+            if (Common.foodSelected!!.size == null)
+                Common.foodSelected!!.size = ArrayList()
+
                 adapter = MySizeAdapter(this,Common.foodSelected!!.size.toMutableList())
                 foodEditPosition = event.pos
                 recycler_addon_size!!.adapter = adapter
                 isAddon = event.isAddon
-            }
+
         }
         else //Addon
         {
-            if (Common.foodSelected!!.addon != null)
-            {
+            if (Common.foodSelected!!.addon == null)
+                Common.foodSelected!!.addon = ArrayList()
+
                 addonAdapter = MyAddonAdapter(this,Common.foodSelected!!.addon.toMutableList())
                 foodEditPosition = event.pos
                 recycler_addon_size!!.adapter = addonAdapter
                 isAddon = event.isAddon
-            }
+
         }
     }
 
