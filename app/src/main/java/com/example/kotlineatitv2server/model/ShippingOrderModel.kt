@@ -8,4 +8,5 @@ class ShippingOrderModel {
     var currentLng= 0.0
     var orderModel:OrderModel?=null
     var isStartTrip=false
+    var restaurantKey:String?=null
 }

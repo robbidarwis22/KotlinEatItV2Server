@@ -476,6 +476,7 @@ class OrderFragment: Fragment(), IShipperLoadCallbackListener {
         dialog: AlertDialog
     ) {
         val shippingOrder = ShippingOrderModel()
+        shippingOrder.restaurantKey = Common.currentServerUser!!.restaurant!!
         shippingOrder.shipperName = shipperModel.name
         shippingOrder.shipperPhone = shipperModel.phone
         shippingOrder.orderModel = orderModel
